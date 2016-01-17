@@ -9,8 +9,8 @@ public class Main {
         //Uncomment to basic example
         new Simple();
         //Uncomment to run platform example
-//        new Platformer();
+        //new Platformer();
         //Uncomment to run more complex example
-//        new Space();
+        //new Space();
     }
 }
