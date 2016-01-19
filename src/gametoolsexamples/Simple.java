@@ -56,7 +56,7 @@ public class Simple extends Game {
         
         timer--; //Increments countdown
         if (timer < 0) {
-            dots.add(new Sprite(randomPosition(dm(764, 764)), dot)); //If timer completes, adds another dot in a random position
+            dots.add(new Sprite(randomPosition(764, 764), dot)); //If timer completes, adds another dot in a random position
             timer = 60; //Restarts the timer
         }
         

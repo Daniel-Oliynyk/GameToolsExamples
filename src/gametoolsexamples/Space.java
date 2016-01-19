@@ -59,8 +59,8 @@ public class Space extends Game {
         plasma.removeWhenOffScreen();
         
         //Generates an animation from a spritesheet using the passed in dimensions, sets the animation speed to two, and sets repeats to zero
-        explosionSmall = new Animation(loadSpriteSheet("img/explosion-small.png", dm(30, 30)), 2, 0);
-        explosionLarge = new Animation(loadSpriteSheet("img/explosion-large.png", dm(60, 60)), 2, 0);
+        explosionSmall = new Animation(loadSpriteSheet("img/explosion-small.png", 30, 30), 2, 0);
+        explosionLarge = new Animation(loadSpriteSheet("img/explosion-large.png", 60, 60), 2, 0);
         
         //Images should be loaded here for efficiency
         missile = loadImage("img/missile.png");
@@ -101,11 +101,11 @@ public class Space extends Game {
             bullet.setSpeed(10);
             bullet.setRelationalMovement(true); //Relational movement means the bullet's compass is in relation to its angle
             //The custom script acts on the bullet every frame
-            bullet.script(new Script(bullet) {
+            bullet.script(new Script() {
                 @Override
                 public void update() {
                     //Bullet simply moves forward (in relation to its angle) every frame
-                    sprite().move(Sprite.Direction.EAST);
+                    bullet.move(Sprite.Direction.EAST);
                 }
             });
             //After the bullet gets added to the group the cooldown restarts
@@ -120,25 +120,25 @@ public class Space extends Game {
             switch (random.nextInt(4)) {
                 case 0:
                     //Left part of screen
-                    enemy.setPosition(pt(-alien.getWidth(), random.nextInt(getHeight())));
+                    enemy.setPosition(-alien.getWidth(), random.nextInt(getHeight()));
                     break;
                 case 1:
                     //Right part of screen
-                    enemy.setPosition(pt(getWidth(), random.nextInt(getHeight())));
+                    enemy.setPosition(getWidth(), random.nextInt(getHeight()));
                     break;
                 case 2:
                     //Top part of screen
-                    enemy.setPosition(pt(random.nextInt(getWidth()), -alien.getHeight()));
+                    enemy.setPosition(random.nextInt(getWidth()), -alien.getHeight());
                     break;
                 case 3:
                 default:
                     //Bottom part of screen
-                    enemy.setPosition(pt(random.nextInt(getWidth()), getHeight()));
+                    enemy.setPosition(random.nextInt(getWidth()), getHeight());
                     break;
             }
             enemy.face(player);
             enemy.setRelationalMovement(true); //Enemy also moves relationally for simplicity
-            enemy.script(new Script(enemy) {
+            enemy.script(new Script() {
                 //Variables can be stored within script object
                 int moveTimer, shootTimer;
                 boolean move;
@@ -152,21 +152,21 @@ public class Space extends Game {
                         moveTimer = move? random.nextInt(60) + 20 : random.nextInt(100) + 100;
                         shootTimer = 0;
                     }
-                    if (move) sprite().move(Sprite.Direction.EAST); //If currently in movement mode, sprite simply moves forward
+                    if (move) enemy.move(Sprite.Direction.EAST); //If currently in movement mode, sprite simply moves forward
                     else {
-                        sprite().turnTo(player); //Gradually turn to face player
+                        enemy.turnTo(player); //Gradually turn to face player
                         shootTimer--;
                         if (shootTimer < 0) {
                             //Adds a bullet pretty much the same way as the player, except a different image
                             Sprite bullet = new Sprite(plasmaBolt);
-                            bullet.centerOn(sprite());
-                            bullet.setAngle(sprite().getAngle());
+                            bullet.centerOn(enemy);
+                            bullet.setAngle(enemy.getAngle());
                             bullet.setSpeed(10);
                             bullet.setRelationalMovement(true);
-                            bullet.script(new Script(bullet) {
+                            bullet.script(new Script() {
                                 @Override
                                 public void update() {
-                                    sprite().move(Sprite.Direction.EAST);
+                                    bullet.move(Sprite.Direction.EAST);
                                 }
                             });
                             plasma.add(bullet);
@@ -215,11 +215,11 @@ public class Space extends Game {
             if (explosion.getWidth() > 50) explosion.setAnimation(new Animation(explosionLarge));
             else explosion.setAnimation(new Animation(explosionSmall));
             explosion.centerOn(center); //Recenters explosion
-            explosion.script(new Script(explosion) {
+            explosion.script(new Script() {
                 @Override
                 public void update() {
                     //As soon as explosion animation completes, it safely removes itself
-                    if (sprite().getAnimation().isComplete()) sprite().remove(true);
+                    if (explosion.getAnimation().isComplete()) explosion.remove(true);
                 }
             });
         }

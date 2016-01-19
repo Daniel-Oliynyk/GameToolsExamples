@@ -50,12 +50,12 @@ public class Platformer extends GravityGame {
         heart = loadImage("img/heart.png"); //Images should be loaded here for efficiency
         player = new Mass(loadImage("img/green.png"));
         player.setSpeed(10);
-        box = generateBox(Color.BLUE, dm(160, 30)); //Generates first platform image
+        box = generateBox(Color.BLUE, 160, 30); //Generates first platform image
         random = new Random();
         
         //Adds first nine platforms
         int max = getWidth() - box.getWidth();
-        for (int i = 0; i < 9; i++) platforms().add(new Sprite(pt(random.nextInt(max), i * 80 + 60), box));
+        for (int i = 0; i < 9; i++) platforms().add(new Sprite(random.nextInt(max), i * 80 + 60, box));
         platforms().removeWhenOffScreen(); //Remove unnecessary platforms automatically
         
         //Increases font size
@@ -72,7 +72,7 @@ public class Platformer extends GravityGame {
         time++;
         
         //Shrink the box width
-        if (time % 30 == 0 && box.getWidth() > 40) box = generateBox(Color.BLUE, dm(box.getWidth() - 1, 30));
+        if (time % 30 == 0 && box.getWidth() > 40) box = generateBox(Color.BLUE, box.getWidth() - 1, 30);
         //Increase the speed
         if (time % 30 == 10 && speed < 4.5) speed += 0.02;
         //Increase box distance
@@ -80,11 +80,11 @@ public class Platformer extends GravityGame {
         
         //If top box farther than box distance, spawn another one
         if (platforms().get(platforms().size() - 1).getY() > distance)
-            platforms().add(new Sprite(pt(random.nextInt(getWidth() - box.getWidth()), -30), box));
+            platforms().add(new Sprite(random.nextInt(getWidth() - box.getWidth()), -30, box));
         
         //Move everything down
-        platforms().translate(pt(0, speed));
-        player.translate(pt(0, speed));
+        platforms().translate(0, speed);
+        player.translate(0, speed);
         
         //Movement and jumping input
         if (keyPressed(KeyEvent.VK_RIGHT) || keyPressed(KeyEvent.VK_D)) player.move(Sprite.Direction.EAST);
@@ -101,7 +101,7 @@ public class Platformer extends GravityGame {
             //If player is dead then reset game and print score
             if (health < 0) {
                 messageDialog("You died with a score of " + score); //Display popup with score
-                platforms().clear();
+                platforms().clear(false);
                 setup(); //Resets all variables
             }
             else respawn();
@@ -130,7 +130,7 @@ public class Platformer extends GravityGame {
     //Respawns the player in the middle of the screen on a red platform
     void respawn() {
         //Create a new red platform in the center
-        Sprite platform = new Sprite(generateBox(Color.RED, dm(box.getWidth(), box.getHeight())));
+        Sprite platform = new Sprite(generateBox(Color.RED, box.getWidth(), box.getHeight()));
         platform.centerOn(getCenter());
         
         //Remove overlapping platforms
@@ -139,7 +139,7 @@ public class Platformer extends GravityGame {
         
         //Move the player above the platform
         player.centerOn(getCenter());
-        player.translate(pt(0, (-platform.getHeight() - player.getHeight()) / 2));
+        player.translate(0, (-platform.getHeight() - player.getHeight()) / 2);
         player.stopJump();
     }
 }
